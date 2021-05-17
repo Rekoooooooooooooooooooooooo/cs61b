@@ -114,6 +114,37 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+        int boundary = this.board.size() - 1;
+        this.board.setViewingPerspective(side);
+        Tile thistile;
+        for (int i = 0; i < this.board.size(); i++) {
+            boundary = this.board.size() - 1;
+            for (int j = boundary - 1; j >= 0; j--) {
+                thistile =  this.board.tile(i, j);
+                if (thistile == null){
+                    continue;
+                } else if (this.board.tile(i, j + 1) != null && thistile.value() != this.board.tile(i, j + 1).value()){
+                    boundary--;
+                    continue;
+                } else {
+                    changed = !changed || changed;
+                    for (int k = j + 1; k <= boundary; k++){
+                        if (this.board.tile(i, k) == null) {
+                            this.board.move(i, k, thistile);
+                        } else if (this.board.tile(i, k).value() != thistile.value()) {
+                            break;
+                        } else {
+                            this.board.move(i, k, thistile);
+                            this.score += this.board.tile(i, k).value();
+                            boundary--;
+                            break;
+                        }
+                        thistile = this.board.tile(i, k);
+                    }
+                }
+                }
+        }
+        this.board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
@@ -138,6 +169,13 @@ public class Model extends Observable {
      * */
     public static boolean emptySpaceExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < b.size(); i++){
+            for(int j = 0; j < b.size(); j++){
+                if(b.tile(i, j) == null){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -148,6 +186,13 @@ public class Model extends Observable {
      */
     public static boolean maxTileExists(Board b) {
         // TODO: Fill in this function.
+        for(int i = 0; i < b.size(); i++){
+            for(int j = 0; j < b.size(); j++){
+                if(b.tile(i, j) != null && b.tile(i, j).value() == MAX_PIECE){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -159,6 +204,81 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
+        if(emptySpaceExists(b)){
+            return true;
+        }else{
+            for(int i = 0; i < b.size(); i++) {
+                for (int j = 0; j < b.size(); j++){
+                    if(is_equal_neighbor(b, i, j)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean is_equal_neighbor(Board b, int col, int row)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        {
+        int tobetested = b.tile(col, row).value();
+        int maxcoordinate = b.size() - 1;
+        if(col > 0 && col < maxcoordinate && row > 0 && row < maxcoordinate){
+                if(tobetested == b.tile(col - 1, row).value()
+                        || tobetested == b.tile(col, row - 1).value()
+                        || tobetested == b.tile(col + 1, row).value()
+                        || tobetested == b.tile(col, row + 1).value()){
+                    return true;
+                }
+        }
+        if(col == 0 && row == 0){
+            if(tobetested == b.tile(col + 1, row).value()
+                    || tobetested == b.tile(col, row + 1).value()){
+                return true;
+            }
+        }
+        if(col == 0 && row == maxcoordinate){
+            if(tobetested == b.tile(col + 1, row).value()
+                    || tobetested == b.tile(col, row - 1).value()){
+                return true;
+            }
+        }
+        if(col == maxcoordinate && row == 0){
+            if(tobetested == b.tile(col - 1, row).value()
+                    || tobetested == b.tile(col, row + 1).value()){
+                return true;
+            }
+        }
+        if(col == maxcoordinate && row == maxcoordinate){
+            if(tobetested == b.tile(col - 1, row).value()
+                    || tobetested == b.tile(col, row - 1).value()){
+                return true;
+            }
+        }
         return false;
     }
 
