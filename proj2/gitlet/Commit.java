@@ -37,7 +37,7 @@ public class Commit implements Serializable, Comparable<Commit>{
         checkDeletion();
         save();
     }
-
+    @SuppressWarnings("unchecked")
     Commit(String first, String second, String message, Date timestamp, Map Maddition) {
         this.parentUID = first;
         this._parentUID = second;

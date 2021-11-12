@@ -70,6 +70,7 @@ public class Repository {
         writeObject(branches_file, branches);
     }
 
+    @SuppressWarnings("unchecked")
     public static void setupPersistance() {
         commitUIDs = readObject(UIDs_file, TreeSet.class);
         addition = readObject(addition_file, TreeMap.class);
@@ -505,6 +506,7 @@ public class Repository {
         return ancestors.last();
     }
 
+    @SuppressWarnings("unchecked")
     private static void lcaHelper(Set cache, Set ancs, Commit a, Commit b) {
         if (a.UID.equals(b.UID)) {
             ancs.add(a);
@@ -545,7 +547,7 @@ public class Repository {
         }
         writeObject(remotes_file, remotes);
     }
-
+    @SuppressWarnings("unchecked")
     public static void push(String remote, String branch){
         String address = remotes.get(remote);
         if (address == null) {
@@ -616,7 +618,7 @@ public class Repository {
             writeContents(blob, readContents(join(rObjects, cUID)));
         }
     }
-
+    @SuppressWarnings("unchecked")
     public static void fetch(String remote, String branch){
         String address = remotes.get(remote);
         if (address == null) {
