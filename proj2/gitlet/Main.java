@@ -1,6 +1,5 @@
 package gitlet;
 
-import java.io.IOException;
 import java.util.*;
 
 import static gitlet.Utils.*;

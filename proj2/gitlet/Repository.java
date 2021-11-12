@@ -1,7 +1,6 @@
 package gitlet;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import static gitlet.Utils.*;
@@ -47,7 +46,7 @@ public class Repository {
     public static TreeMap<String, String> branches;
     public static HashMap<String, String> remotes;
 
-    public static void init() throws IOException {
+    public static void init(){
         if (!GITLET_DIR.mkdir()) {
             message("A Gitlet version-control system already exists in the current directory.");
             return;
