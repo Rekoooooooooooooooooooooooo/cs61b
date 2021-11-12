@@ -1,5 +1,4 @@
 package DebugExercise;
-
 /**
  * Exercise for learning how the debug, breakpoint, and step-into
  * feature work.

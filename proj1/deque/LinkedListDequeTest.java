@@ -187,6 +187,20 @@ public class LinkedListDequeTest {
 
 
     @Test
+    public void iteratorTest() {
+
+        LinkedListDeque<Integer> lld = new LinkedListDeque<>();
+        for (int i = 0; i < 1000; i++) {
+            lld.addLast(i);
+        }
+        int num = 0;
+        for (int i : lld){
+            assertEquals(num++, i);
+        }
+    }
+
+
+    @Test
     public void testThreeAddThreeRemove() {
         int[] items = {4, 5, 6};
         LinkedListDeque testLLD = new LinkedListDeque<Integer>();

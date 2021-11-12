@@ -1,6 +1,7 @@
 package deque;
+import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Deque<T> {
+public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
     private static class ItemNode<T> {
         private ItemNode last;
         private T item;
@@ -174,28 +175,49 @@ public class LinkedListDeque<T> implements Deque<T> {
         lld1.getRecursive(2);
     }
 
-    /**
      @Override
-    public Iterator<T> iterator() {
-        //TODO
-    }
-     */
+     public Iterator<T> iterator() {
+        return new LinkedListDequeIterator();
+     }
+
+     private class LinkedListDequeIterator implements Iterator<T> {
+         private ItemNode<T> wizNode;
+
+         public LinkedListDequeIterator() {
+             wizNode = sentinel.rest;
+         }
+
+         @Override
+         public boolean hasNext() {
+            return wizNode != sentinel;
+         }
+
+         @Override
+         public T next() {
+             T returnItem = wizNode.item;
+             wizNode = wizNode.rest;
+             return returnItem;
+         }
+     }
 
     @Override
     public boolean equals(Object o){
-        if (o instanceof LinkedListDeque && ((LinkedListDeque<?>) o).size() == size) {
-            ItemNode p_this = sentinel.rest;
-            ItemNode p_o = ((LinkedListDeque<?>) o).getNode(0);
-            while (p_this != sentinel) {
-                if (p_o.item != p_this.item) {
-                    return false;
-                }
-                p_o = p_o.rest;
-                p_this = p_this.rest;
-            }
-            return true;
-        } else {
+        if (!(o instanceof LinkedListDeque)) {
             return false;
         }
+        LinkedListDeque<T> other = (LinkedListDeque<T>) o;
+        if (other.size() == size) {
+            return false;
+        }
+        ItemNode p_this = sentinel.rest;
+        ItemNode p_o = other.getNode(0);
+        while (p_this != sentinel) {
+            if (p_o.item != p_this.item) {
+                return false;
+            }
+            p_o = p_o.rest;
+            p_this = p_this.rest;
+        }
+        return true;
     }
 }

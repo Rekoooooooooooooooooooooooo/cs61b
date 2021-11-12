@@ -1,6 +1,7 @@
 package deque;
+import java.util.Iterator;
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private T[] items;
     private int size;
     private int minLength = 8;
@@ -185,24 +186,45 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ArrayDeque && ((ArrayDeque<?>) o).size() == size) {
-            for (int i = 0; i < size; i++) {
-                if (get(i) != ((ArrayDeque<?>) o).get(i)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
+        if (!(o instanceof ArrayDeque)) {
             return false;
         }
+        ArrayDeque<T> other = (ArrayDeque<T>) o;
+        if (other.size() != size) {
+            return false;
+        }
+        for (int i = 0; i < size; i++) {
+            if (get(i) != other.get(i)) {
+                return false;
+            }
+        }
+        return true;
     }
 
-    /**
      @Override
      public Iterator<T> iterator(){
-        //TODO
+        return new ArrayDequeIterator();
      }
-     */
+
+     private class ArrayDequeIterator implements Iterator<T> {
+         private int wizPos;
+
+         public ArrayDequeIterator() {
+             wizPos = 0;
+         }
+
+         @Override
+         public boolean hasNext() {
+             return wizPos < size;
+         }
+
+         @Override
+         public T next() {
+             T returnItem = get(wizPos);
+             wizPos += 1;
+             return returnItem;
+         }
+     }
 
     public static void main(String[] args) {
         ArrayDeque<Integer> ard = new ArrayDeque();

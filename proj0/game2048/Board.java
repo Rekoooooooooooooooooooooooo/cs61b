@@ -58,7 +58,7 @@ public class Board implements Iterable<Tile> {
 
     /** Return the current Tile at (COL, ROW), when sitting with the board
      *  oriented so that SIDE is at the top (farthest) from you. */
-    private Tile vtile(int col, int row, Side side) {
+    public Tile vtile(int col, int row, Side side) {
         return values[side.col(col, row, size())][side.row(col, row, size())];
     }
 

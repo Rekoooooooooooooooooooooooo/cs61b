@@ -110,41 +110,36 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
+        // TODO: Modify board (and perhaps score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
-        int boundary = this.board.size() - 1;
-        this.board.setViewingPerspective(side);
+        int boundary;
+        board.setViewingPerspective(side);
         Tile thistile;
-        for (int i = 0; i < this.board.size(); i++) {
-            boundary = this.board.size() - 1;
-            for (int j = boundary - 1; j >= 0; j--) {
-                thistile =  this.board.tile(i, j);
+        for (int i = 0; i < board.size(); i++) {
+            boundary = board.size() - 1;
+            for (int j = boundary - 1; j >= 0;) {
+                thistile =  board.tile(i, j);
                 if (thistile == null){
-                    continue;
-                } else if (this.board.tile(i, j + 1) != null && thistile.value() != this.board.tile(i, j + 1).value()){
+                    j--;
+                } else if (board.tile(i, boundary) != null && thistile.value() != board.tile(i, boundary).value()){
                     boundary--;
-                    continue;
+                    if (boundary == j) {
+                        j--;
+                    }
                 } else {
-                    changed = !changed || changed;
-                    for (int k = j + 1; k <= boundary; k++){
-                        if (this.board.tile(i, k) == null) {
-                            this.board.move(i, k, thistile);
-                        } else if (this.board.tile(i, k).value() != thistile.value()) {
-                            break;
-                        } else {
-                            this.board.move(i, k, thistile);
-                            this.score += this.board.tile(i, k).value();
-                            boundary--;
-                            break;
-                        }
-                        thistile = this.board.tile(i, k);
+                    changed = true;
+                    if (board.move(i, boundary, thistile)) {
+                        score += board.tile(i, boundary).value();
+                        boundary--;
+                        j--;
                     }
                 }
-                }
+            }
         }
-        this.board.setViewingPerspective(Side.NORTH);
+
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();

@@ -1,5 +1,6 @@
 package deque;
 
+import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -144,28 +145,41 @@ public class ArrayDequeTest {
      @Test
      public void equalTest() {
 
-     ArrayDeque<Integer> ard1 = new ArrayDeque<>();
-     ArrayDeque<Integer> ard2 = new ArrayDeque<>();
-     ArrayDeque<Integer> ard3 = new ArrayDeque<>();
-     ArrayDeque<Integer> ard4 = new ArrayDeque<>();
-     ArrayDeque<Double> ard5 = new ArrayDeque<>();
-     for (int i = 0; i < 10; i++) {
-     ard1.addLast(i);
-     ard2.addLast(i);
-     ard3.addLast(i);
-     ard4.addLast(i);
-     ard5.addLast((double) i);
-     }
+         ArrayDeque<Integer> ard1 = new ArrayDeque<>();
+         ArrayDeque<Integer> ard2 = new ArrayDeque<>();
+         ArrayDeque<Integer> ard3 = new ArrayDeque<>();
+         ArrayDeque<Integer> ard4 = new ArrayDeque<>();
+         ArrayDeque<Double> ard5 = new ArrayDeque<>();
+         for (int i = 0; i < 10; i++) {
+         ard1.addLast(i);
+         ard2.addLast(i);
+         ard3.addLast(i);
+         ard4.addLast(i);
+         ard5.addLast((double) i);
+         }
 
-     assertTrue(ard1.equals(ard2));
+         assertTrue(ard1.equals(ard2));
 
-     assertFalse(ard1.equals(ard5));
+         assertFalse(ard1.equals(ard5));
 
-     ard3.removeLast();
-     assertFalse(ard1.equals(ard3));
+         ard3.removeLast();
+         assertFalse(ard1.equals(ard3));
 
-     ard4.removeFirst();
-     assertFalse(ard1.equals(ard4));
+         ard4.removeFirst();
+         assertFalse(ard1.equals(ard4));
 
+    }
+
+    @Test
+    public void iteratorTest() {
+
+        ArrayDeque<Integer> ard = new ArrayDeque<>();
+        for (int i = 0; i < 1000; i++) {
+            ard.addLast(i);
+        }
+        int num = 0;
+        for (int i : ard){
+            assertEquals(num++, i);
+        }
     }
 }
