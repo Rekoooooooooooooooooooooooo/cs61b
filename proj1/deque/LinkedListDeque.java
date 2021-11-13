@@ -22,12 +22,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         size = 0;
     }
 
-    public LinkedListDeque(T item) {
-        sentinel.rest = new ItemNode<>(sentinel, item, sentinel);
-        sentinel.last = sentinel.rest;
-        size = 1;
-    }
-
     /** The Deque API*/
 
     @Override
@@ -146,7 +140,7 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
         }
     }
 
-    public ItemNode getNode(int index) {
+    private ItemNode getNode(int index) {
         if (index < size) {
             ItemNode p;
             if (index < size / 2) {
@@ -162,17 +156,6 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
             }
             return p;
         } else { return null; }
-    }
-
-    public static void main(String[] args) {
-        /* Creates a list of one integer, namely 10 */
-
-        LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
-        for (int i = 0; i < 5; i++) {
-            lld1.addLast(i);
-        }
-
-        lld1.getRecursive(2);
     }
 
      @Override
@@ -201,18 +184,19 @@ public class LinkedListDeque<T> implements Deque<T>, Iterable<T> {
      }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object o){
         if (!(o instanceof LinkedListDeque)) {
             return false;
         }
         LinkedListDeque<T> other = (LinkedListDeque<T>) o;
-        if (other.size() == size) {
+        if (other.size() != size) {
             return false;
         }
         ItemNode p_this = sentinel.rest;
         ItemNode p_o = other.getNode(0);
         while (p_this != sentinel) {
-            if (p_o.item != p_this.item) {
+            if (!p_o.item.equals(p_this.item)) {
                 return false;
             }
             p_o = p_o.rest;

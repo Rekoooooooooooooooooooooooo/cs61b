@@ -4,15 +4,16 @@ import java.util.Iterator;
 public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     private T[] items;
     private int size;
-    private int minLength = 8;
+    private final int minLength = 8;
     private int First;
     private int nextFirst;
     private int Last;
     private int nextLast;
-    private double minusage = 0.25;
-    private double maxusage = 0.75;
+    private final double minusage = 0.25;
+    private final double maxusage = 0.75;
 
     /** Creates an empty list. */
+    @SuppressWarnings("unchecked")
     public ArrayDeque() {
         items = (T[]) new Object[minLength];
         size = 0;
@@ -185,6 +186,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
         if (!(o instanceof ArrayDeque)) {
             return false;
@@ -194,7 +196,7 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
             return false;
         }
         for (int i = 0; i < size; i++) {
-            if (get(i) != other.get(i)) {
+            if (!get(i).equals(other.get(i))) {
                 return false;
             }
         }
@@ -225,10 +227,4 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
              return returnItem;
          }
      }
-
-    public static void main(String[] args) {
-        ArrayDeque<Integer> ard = new ArrayDeque();
-        ard.addFirst(64);
-        ard.printDeque();
-    }
 }
