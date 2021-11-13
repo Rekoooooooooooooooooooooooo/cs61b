@@ -76,7 +76,8 @@ public class Repository {
         deletion = readObject(deletion_file, TreeSet.class);
         branches = readObject(branches_file, TreeMap.class);
         remotes = readObject(remotes_file, HashMap.class);
-        head = Head.setPersistance();
+        head = readObject(head_file, Head.class);
+        head.file = head_file;
     }
 
     public static void add(String filename) {
@@ -157,7 +158,7 @@ public class Repository {
         } else {
             System.out.println(String.format(Locale.ENGLISH,
                     "===\ncommit %1$2s\nMerge: %2$2s %3$2s\nDate: %4$ta %4$tb %4$te %4$tT %4$tY %4$tz\n%5$2s\n",
-                    commit.UID, commit.parentUID.substring(0, 6), commit._parentUID.substring(0, 6), commit.timestamp, commit.message));
+                    commit.UID, commit.parentUID.substring(0, 7), commit._parentUID.substring(0, 7), commit.timestamp, commit.message));
         }
     }
 
@@ -436,7 +437,7 @@ public class Repository {
                         return;
                     } else {                                                                                                       // 2
                         Maddition.put(filename, OT);
-                        writeContents(getFileinCWD(filename), getContentinObjects(OT));
+                        writeContents(getFileinCWD(filename), (Object) getContentinObjects(OT));
                     }
                 } else {
                     if (!OT.equals(HD)) {
@@ -452,7 +453,7 @@ public class Repository {
                     if (!OT.equals(HD)) {
                         if (HD.equals(SP)) {                                                                                        // 6
                             Maddition.put(filename, OT);
-                            writeContents(getFileinCWD(filename), getContentinObjects(OT));
+                            writeContents(getFileinCWD(filename), (Object) getContentinObjects(OT));
                         } else {
                             if (!OT.equals(SP)) {
                                 confilct(Maddition, filename, HD, OT);                                                                  // 5
@@ -480,6 +481,7 @@ public class Repository {
             return;
         }
 
+        //Commit mergeCommit = new Commit(head.UID, other.UID, String.format("Merged %s into %s.", branch, head.branch), new Date(), Maddition);
         head.moveTo(new Commit(head.UID, other.UID, String.format("Merged %s into %s.", branch, head.branch), new Date(), Maddition));
         branches.put(head.branch, head.UID);
         writeObject(branches_file, branches);
@@ -546,26 +548,26 @@ public class Repository {
         }
         writeObject(remotes_file, remotes);
     }
-    @SuppressWarnings("unchecked")
+
     public static void push(String remote, String branch){
         String address = remotes.get(remote);
-        if (address == null) {
+        File remoteDir = join(address);
+        if (!remoteDir.exists()) {
             message("Remote directory not found.");
             return;
         }
-        File remoteDir = join(address);
 
         Commit branchHD = getBranch(branch);
         if (branchHD == null) return;
 
         File rBranches_file = join(remoteDir,  "branches");
-        TreeMap<String, String > rBranches = readObject(rBranches_file, TreeMap.class);
+        @SuppressWarnings("unchecked") TreeMap<String, String > rBranches = readObject(rBranches_file, TreeMap.class);
         File rObejects = join(remoteDir, "objects");
         File rCommits = join(remoteDir, "commits");
 
         String rBranchHead = rBranches.get(branch);
         if (rBranchHead == null) {
-            copyCommitToRm(branchHD.UID, rCommits, rObejects);
+            copyCommitToRm(branchHD, rCommits, rObejects);
             rBranches.put(branch, branchHD.UID);
             writeObject(rBranches_file, rBranches);
             return;
@@ -588,87 +590,69 @@ public class Repository {
             message("Please pull down remote changes before pushing.");
             return;
         }
-        for (String pptr = branchHD.UID; pptr.equals(ptr); pptr = Commit.getCommit(pptr).parent().UID) {
-            copyCommitToRm(pptr, rCommits, rObejects);
+        String pptr = branchHD.UID;
+        while (!pptr.equals(ptr)) {
+            Commit c = Commit.getCommit(pptr);
+            copyCommitToRm(c, rCommits, rObejects);
+            pptr = c.parent().UID;
         }
         rBranches.put(branch, branchHD.UID);
         writeObject(rBranches_file, rBranches);
+
+        File rHeadfile = join(remoteDir, "head");
+        Head rHead = readObject(rHeadfile, Head.class);
+        if (rHead.branch.equals(branch)) {
+            rHead.moveTo(branchHD);
+        }
     }
 
-    private static void copyCommitToRm(String cUID, File rCommits, File rObjects) {
-        Commit c = Commit.getCommit(cUID);
-        File x = join(rCommits, cUID);
+    private static void copyCommitToRm(Commit c, File rCommits, File rObjects) {
+        File x = join(rCommits, c.UID);
         writeObject(x, c);
         for (Map.Entry<String, String> file : c.entries()) {
             String fileUID = file.getValue();
             File blob = join(rObjects, fileUID);
-            writeContents(blob, getContentinObjects(fileUID));
+            writeContents(blob, (Object) getContentinObjects(fileUID));
         }
     }
 
-    private static void copyCommitFrRm(String cUID, File rCommits, File rObjects) {
-        File x = join(rCommits, cUID);
-        Commit c = readObject(x, Commit.class);
-        File b = join(commits, cUID);
+    private static void copyCommitFrRm(Commit c, File rCommits, File rObjects) {
+        File b = join(commits, c.UID);
         writeObject(b, c);
         for (Map.Entry<String, String> file : c.entries()) {
             String fileUID = file.getValue();
             File blob = join(objects, fileUID);
-            writeContents(blob, readContents(join(rObjects, cUID)));
+            writeContents(blob, (Object) readContents(join(rObjects, fileUID)));
         }
     }
-    @SuppressWarnings("unchecked")
+
     public static void fetch(String remote, String branch){
         String address = remotes.get(remote);
-        if (address == null) {
+        File remoteDir = join(address);
+        if (!remoteDir.exists()) {
             message("Remote directory not found.");
             return;
         }
-        File remoteDir = join(address);
         File rBranches_file = join(remoteDir,  "branches");
-        TreeMap<String, String > rBranches = readObject(rBranches_file, TreeMap.class);
+
+        @SuppressWarnings("unchecked") TreeMap<String, String > rBranches = readObject(rBranches_file, TreeMap.class);
+        String rBranchHead = rBranches.get(branch);
+
         File rObejects = join(remoteDir, "objects");
         File rCommits = join(remoteDir, "commits");
-        String rBranchHead = rBranches.get(branch);
         if (rBranchHead == null) {
             message("That remote does not have that branch.");
             return;
         }
-        String branchHD = branches.get(branch);
-        if (branchHD == null) {
-            copyCommitFrRm(rBranchHead, rCommits, rObejects);
-            branches.put(branch, rBranchHead);
-            writeObject(branches_file, branches);
-            return;
-        }
-        boolean isancestor = false;
-        String ptr = rBranchHead;
-        while(true){
-            if (ptr.equals(branchHD) ) {
-                isancestor = true;
-                break;
-            }
-            Commit a = readObject(join(rCommits, ptr), Commit.class);
-            if (a.parentUID == null) {
-                break;
-            } else {
-                ptr = a.parent().UID;
-            }
-        }
-        if (!isancestor) {
-            message("The remote branch is not local branch.");
-            return;
-        }
-        for (String pptr = rBranchHead; pptr.equals(ptr); pptr = readObject(join(rCommits, ptr), Commit.class).parent().UID) {
-            copyCommitFrRm(pptr, rCommits, rObejects);
-        }
-        branches.put(branch, rBranchHead);
+        Commit c = readObject(join(rCommits, rBranchHead), Commit.class);
+        copyCommitFrRm(c, rCommits, rObejects);
+        branches.put(remote + "/" + branch, rBranchHead);
         writeObject(branches_file, branches);
     }
 
     public static void pull(String remote, String branch){
         fetch(remote, branch);
-        merge(branch);
+        merge(remote + "/" + branch);
     }
 
     public static File getFileinCWD(String filename) {
