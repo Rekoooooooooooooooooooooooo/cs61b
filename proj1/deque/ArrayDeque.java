@@ -188,10 +188,13 @@ public class ArrayDeque<T> implements Deque<T>, Iterable<T> {
     @Override
     @SuppressWarnings("unchecked")
     public boolean equals(Object o) {
-        if (!(o instanceof ArrayDeque)) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Deque)) {
             return false;
         }
-        ArrayDeque<T> other = (ArrayDeque<T>) o;
+        Deque<T> other = (Deque<T>) o;
         if (other.size() != size) {
             return false;
         }
