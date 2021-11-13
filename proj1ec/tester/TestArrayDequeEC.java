@@ -9,8 +9,8 @@ public class TestArrayDequeEC {
 
     @Test
     public void randomizedTest() {
-        StudentArrayDeque  SAD = new StudentArrayDeque<Integer>();
-        ArrayDequeSolution  ADS = new ArrayDequeSolution<Integer>();
+        StudentArrayDeque<Integer>  SAD = new StudentArrayDeque<>();
+        ArrayDequeSolution<Integer>  ADS = new ArrayDequeSolution<>();
         int N = 5000;
         for (int i = 0; i < N; i += 1) {
             int operationNumber = StdRandom.uniform(0, 5);
@@ -30,24 +30,22 @@ public class TestArrayDequeEC {
                 // size
                 int size_SAD = SAD.size();
                 int size_ADS = ADS.size();
-                assertEquals(size_SAD, size_ADS);
-                System.out.println("size: " + size_SAD);
+                assertEquals("size: " + size_SAD, size_SAD, size_ADS);
+                System.out.println("size()");
             } else if (SAD.size() > 0) {
                 //removeLast
-                if (operationNumber == 3) {
-                    int rmlast_SAD = (int) SAD.removeLast();
-                    int rmlast_ADS = (int) ADS.removeLast();
-                    assertEquals("Oh noooo!\nThis is bad:\n   SAD " + rmlast_SAD
-                            + " not equal to ADS" + rmlast_ADS + "!", rmlast_SAD, rmlast_ADS);
-                    System.out.println("removeLast(" + rmlast_SAD + ")");
+                if (operationNumber == 3 && !ADS.isEmpty() && !SAD.isEmpty()) {
+                    Integer rmlast_SAD = (int) SAD.removeLast();
+                    Integer rmlast_ADS = (int) ADS.removeLast();
+                    assertEquals("removeLast(" + rmlast_SAD + ")", rmlast_SAD, rmlast_ADS);
+                    System.out.println("removeLast()");
                 }
                 //removeFirst
-                if (operationNumber == 4) {
-                    int last_SAD = (int) SAD.removeFirst();
-                    int last_ADS = (int) ADS.removeFirst();
-                    assertEquals("Oh noooo!\nThis is bad:\n   SAD " + last_SAD
-                            + " not equal to ADS" + last_ADS + "!", last_SAD, last_ADS);
-                    System.out.println("removeFirst(" + last_SAD + ")");
+                if (operationNumber == 4 && !ADS.isEmpty() && !SAD.isEmpty()) {
+                    Integer last_SAD = (int) SAD.removeFirst();
+                    Integer last_ADS = (int) ADS.removeFirst();
+                    assertEquals("removeFirst(" + last_SAD + ")", last_SAD, last_ADS);
+                    System.out.println("removeFirst()");
                 }
             }
         }
