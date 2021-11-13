@@ -9,7 +9,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     }
 
 
-    public boolean isEmpty() {
+    private boolean isEmpty() {
         return size() == 0;
     }
 
@@ -86,26 +86,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         keySet(x.right, keyset);
     }
 
-    public void deleteMin() {
-        if (isEmpty()) throw new NoSuchElementException("Symbol table underflow");
-        root = deleteMin(root);
-    }
 
     private BSTNode deleteMin(BSTNode x) {
         if (x.left == null) return x.right;
         x.left = deleteMin(x.left);
-        x.size = size(x.left) + size(x.right) + 1;
-        return x;
-    }
-
-    public void deleteMax() {
-        if (isEmpty()) throw new NoSuchElementException("Symbol table underflow");
-        root = deleteMax(root);
-    }
-
-    private BSTNode deleteMax(BSTNode x) {
-        if (x.right == null) return x.left;
-        x.right = deleteMax(x.right);
         x.size = size(x.left) + size(x.right) + 1;
         return x;
     }
@@ -147,7 +131,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         return x;
     }
 
-    public K min() {
+    private K min() {
         if (isEmpty()) throw new NoSuchElementException("calls min() with empty symbol table");
         return min(root).key;
     }
@@ -157,7 +141,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         else return min(x.left);
     }
 
-    public K max() {
+    private K max() {
         if (isEmpty()) throw new NoSuchElementException("calls max() with empty symbol table");
         return max(root).key;
     }
