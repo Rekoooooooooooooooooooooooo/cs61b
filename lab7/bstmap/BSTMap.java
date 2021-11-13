@@ -5,7 +5,7 @@ import java.util.*;
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     private BSTNode root;             // root of BST
 
-    BSTMap() {
+    public BSTMap() {
     }
 
 
