@@ -1,7 +1,5 @@
 package bstmap;
 
-import edu.princeton.cs.algs4.BST;
-
 import java.util.*;
 
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
@@ -10,9 +8,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
     BSTMap() {
     }
 
-    BSTMap(K key, V val) {
-        root = new BSTNode(key, val, 1);
-    }
 
     public boolean isEmpty() {
         return size() == 0;

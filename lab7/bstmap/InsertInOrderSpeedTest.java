@@ -5,8 +5,6 @@ import java.util.TreeMap;
 import java.io.IOException;
 import java.util.Scanner;
 
-import edu.princeton.cs.algs4.Stopwatch;
-
 /**
  * Performs a timing test on three different set implementations.
  * For BSTMap purposes assumes that <K,V> are <String, Integer> pairs.
