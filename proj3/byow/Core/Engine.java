@@ -45,8 +45,12 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        int index = 0;
+        while (input.charAt(index) != 'N' && input.charAt(index) != 'n') index++;
+        int j = index+1;
+        while ('0' <= input.charAt(j) && input.charAt(j) <= '9') j++;
+        long seed = Long.parseLong(input.substring(index+1, j));
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        return new Map(seed, finalWorldFrame).map;
     }
 }
